@@ -1,0 +1,14 @@
+---
+title: "Apostila SSH"
+author: "Gustavo Burin Ferreira"
+date: "Maio/2015"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
+geometry: twoside
+---
+
+# Teste para ver se funfa a bagaça
+
+Um pouco de textão polêmico

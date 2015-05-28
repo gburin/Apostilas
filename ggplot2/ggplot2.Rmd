@@ -1,0 +1,384 @@
+---
+title: "Tutorial ggplot2"
+author: "Laboratório de Macroevolução e Macroecologia"
+date: "Maio/2015"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    fig_height: 6
+    fig_width: 7
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+\newpage
+
+# O pacote ggplot2
+
+O pacote *ggplot2* foi desenvolvido pelo Dr. Hadley Wickham (que
+desenvolveu diversos outros pacotes importantes para **R** como o
+*(d)plyr* por exemplo. Este pacote implementa uma nova maneira de
+criar gráficos a partir dos dados, trazendo o conceito de camadas
+(*layers*) para a sintaxe do **R**. Com esse novo conceito, surge
+também a necessidade de se organizar os dados de uma maneira que
+facilite a utilização da nova sintaxe. Para isso, os outros pacotes
+(como os já mencionados *(d)plyr*) foram desenvolvidos pelo
+Dr. Wickham de maneira a tornar a manipulação de dados mais ágil,
+intuitiva e já adequada para o uso conjunto com *ggplot2*.
+
+## Instalação
+
+O pacote deve ser instalado como qualquer outro pacote no **R**:
+
+```{r eval=FALSE}
+install.packages("ggplot2")
+```
+
+É possível também instalar as versões mais recentes do pacote (mas que
+podem apresentar instabilidades ou serem incompletas) através da
+função *install_github* do pacote **devtools**. Este tipo de
+instalação usa os arquivos disponíveis no repositório público do
+*ggplot2* no github.
+
+```{r eval=FALSE}
+install.packages("devtools")
+library(devtools)
+install_github("hadley/ggplot2")
+```
+
+Após a instalação, carregue o pacote para utilização.
+
+```{r eval=FALSE}
+library(ggplot2)
+```
+
+# Como organizar os dados para o *ggplot2*
+
+É bastante comum usuários enfrentarem problemas nas primeiras vezes
+que usam o *ggplot2* pois ao organizarem os dados para serem
+importados no **R**, procuram o fazer da maneira mais sintética
+possivel, agrupando variáveis por exemplo. A tabela a seguir é um
+exemplo de como **NÃO** se deve organizar os dados para serem usados
+com o *ggplot2* (~~para nenhuma situação na verdade~~).
+
+```{r echo=FALSE}
+a <- rnorm(5,10,1)
+b <- rnorm(5,10,0.5)
+data.frame("Tratamento" = c("Tratamento A - 2h","Tratamento A - 4h","Tratamento A - 8h","Tratamento A - 16h","Tratamento A - 24h","Tratamento B - 2h","Tratamento B - 4h","Tratamento B - 8h","Tratamento B - 16h","Tratamento B - 24h"), "Valor" = c(a,b))
+```
+
+Os objetos de entrada nas funções do *ggplot2* são da classe
+*data.frame*. No entanto, organizar o *data.frame* de maneira a
+otimizar o trabalho poupa bastante tempo ~~e dor de cabeça~~. O *data.frame*
+a ser usado em um trabalho deve idealmente conter cada uma das
+variáveis em colunas separadas, e cada observação em linhas
+separadas. Assim, o exemplo anterior deveria ser idealmente
+organizado da seguinte forma:
+
+```{r echo=FALSE}
+data.frame("Valor" = c(a,b), "Tempo" = rep(c(2,4,8,16,24),2), "Tratamento" = rep(c("Tratamento A","Tratamento B"),each=5))
+```
+
+Alguns pacotes foram desenvolvidos com o propósito de facilitar a
+organização dos dados de maneira limpa e otimizada. Dentre esses
+pacotes, encontram-se *(d)plyr*, *tidyr*, *magrittr* dentre outros.
+
+# Estrutura básica de um gráfico
+
+Como dito na introdução, um gráfico feito no *ggplot2* consiste de
+diversas camadas que são adicionadas a uma estrutura básica. Essa
+estrutura básica é criada usando as funções *ggplot* ou *qplot*. Essas
+funções possuem dois componentes essenciais: *data*, que como o nome
+diz recebe o *data.frame* a ser utilizado para a construção do
+gráfico, e *mapping*, que é o argumento que controla a estética do
+gráfico, ou seja, que controla quais variáveis serão plotadas nos
+eixos *x* e *y*, dentre outros detalhes que serão abordados
+posteriormente. Para o mapeamento dos dados, usaremos a função *aes*,
+na qual indicaremos qual variável deve ser posicionada em cada eixo,
+além de outros argumentos relativos a cor, tamanho, etc.
+
+Diogo Melo, do Laboratório de Evolução de Mamíferos do IB-USP
+sintetizou uma regra geral para gráficos no *ggplot2*:
+
+```r
+ggplot(data_frame_entrada, aes(x = coluna_eixo_x,
+                               y = coluna_eixo_y,
+                               group = coluna_agrupadora,
+                               color = coluna_das_cores))
++ geom_tipo_do_grafico(opções que não dependem dos dados,
+                       aes(opções que dependem))
+```
+
+Para exemplificar a construção de um gráfico, usaremos o conjunto de
+dados do próprio pacote *ggplot2* chamado **diamonds**.
+
+```{r warning=FALSE}
+data(diamonds)
+head(diamonds)
+```
+
+## Gráficos unidimensionais (boxplots e histogramas)
+
+Um bom modo de iniciar qualquer análise é fazendo uma análise
+exploratória dos dados. Para isso, alguns tipos específicos de
+gráficos como *boxplots* ou histogramas são maneiras simples de
+visualizar a estrutura básica dos dados. Estes tipos de gráfico são
+ditos unidimensionais, pois representam apenas uma variável. Neste
+tópico, veremos como criar esses dois gráficos de maneira simples
+(complementos serão adicionados mais para frente no tutorial).
+
+O primeiro passo para criarmos um gráfico é então gerar o objeto da
+classe **ggplot**. **DICA: armazene as camadas básicas do seu gráfico
+em um objeto, pois isso facilita a adição de novas camadas
+sem a necessidade de repetir o código inteiro.**
+
+```{r warning=FALSE}
+g1 <- ggplot(data=diamonds,aes(x=1,y=price))
+```
+
+No exemplo acima, indicamos que a variável *price* deve ser atribuída
+ao eixo *y*, e o eixo *x* recebe o valor 1 apenas para posicionar o gráfico. Além disso o código que
+acabamos de rodar serve apenas para criar um objeto da
+classe **ggplot**, porém ele ainda não produz nenhum gráfico. Ao
+chamarmos o objeto g1:
+
+```{r eval=FALSE, warning=FALSE}
+## Error: No layers in plot
+```
+
+Isso se deve ao fato de que nenhuma camada de gráfico foi adicionada,
+ou seja, não especificamos qual o tipo de gráfico desejamos
+produzir. A maioria das camadas iniciais podem ser criadas usando as
+funções da família **geom_**. No primeiro exemplo, vamos criar um
+boxplot para termos uma ideia de valores mínimos, máximos, média e
+posição dos quartis.
+
+```{r warning=FALSE}
+g1 + geom_boxplot()
+```
+
+Note a sintaxe bastante intuitiva que usa o símbolo "+" para adicionar
+camadas. Isso torna o *ggplot2* um pacote bastante prático ~~depois
+de pegar o jeito~~ para criar gráficos informativos, bonitos e prontos
+para publicação.
+
+Para criarmos um histograma simples, é igualmente fácil:
+
+```{r warning=FALSE}
+ggplot(diamonds,aes(x=price)) + geom_histogram()
+```
+
+Observe no entanto que para o histograma a variável de interesse está
+no eixo *x*, já que o eixo *y* contém a contagem de valores em cada
+intervalo.
+
+Os gráficos básicos podem não parecer tão bonitos assim à primeira
+vista; vamos aprender em seções posteriores como modificar a estética
+dos gráficos (cores, tamanho, bordas, plano de fundo, etc.).
+
+## Gráficos bidimensionais (gráficos de dispersão, modelos lineares, etc.)
+
+### Gráficos de dispersão
+
+Em grande parte dos estudos em ecologia buscamos analisar como duas ou
+mais variáveis se comportam umas em relação às outras. Para isso, um
+bom ponto de partida é construir gráficos de dispersão
+(*scatterplots*). No exemplo a seguir construiremos um
+gráfico de dispersão entre as variáveis *carat* e *price*.
+
+```{r warning=FALSE}
+g2 <- ggplot(diamonds,aes(x=carat,y=price))
+g2 + geom_point()
+```
+
+Note que no exemplo acima, estamos indicando para a função ggplot que
+as camadas que forem adicionadas de agora em diante devem conter os
+valores de *carat* no eixo *x* e de *price* no eixo *y*. Isso pode ser
+modificado posteriormente (como nos casos onde você quer por exemplo
+acrescentar uma outra variável no eixo *y*), e será exemplificado mais
+adiante. No entanto, a maioria (se não todas) das funções da família
+**geom_** também possuem os argumentos básicos
+*data* e *mapping*. Sendo assim, uma outra forma de criar o mesmo
+gráfico é:
+
+```{r warning=FALSE}
+ggplot() + geom_point(data=diamonds,mapping=aes(x=carat,y=price))
+```
+
+Caso a cor padrão ~~seja feia~~ não seja adequada,
+podemos indicar para o gráfico qual cor queremos usar para os pontos.
+Como cor é um dos componentes essenciais da parte estética de
+um gráfico, essa especificação deve entrar na função *aes*.
+```{r warning=FALSE}
+g2 + geom_point(mapping=aes(colour="red"))
+```
+
+Ao analisarmos o conteúdo do objeto **diamonds** notamos que os
+valores de *carat* e *price* são divididos por classe de *cut*,
+*color* e *clarity*. Assim, podemos por exemplo representar o mesmo
+conjunto de dados separados por classe de *clarity* por exemplo. Se
+seu objeto contendo os dados estiver mal organizado, você levaria um
+tempo razoável para adicionar uma cada para cada classe cada uma com
+uma cor diferente. Porém, como já aprendemos a organizar nossos dados
+de maneira idea, podemos facilmente usar a variável *clarity* para
+atribuir diferentes cores que representarão cada uma das
+classes da seguinte forma:
+
+```{r warning=FALSE}
+g2 + geom_point(mapping=aes(colour=clarity))
+```
+
+Essa separação em classes de *clarity* pode ser feita em outros tipos
+de gráfico também (os *outliers* foram removidos para fins de visualização):
+
+```{r warning=FALSE}
+ggplot(data=diamonds,
+       aes(x=clarity, y=price, group=interaction(clarity,cut), color=clarity)) +
+           geom_boxplot(outlier.shape=NA)
+```
+
+### Adicionando linhas de tendência
+
+Os gráficos de dispersão que construímos até agora indicam que existe
+uma relação positiva entre quilates e preço. Nesse caso, podemos
+ajustar um modelo linear que indique como se dá essa correlação. Para
+isso, o pacote *ggplot2* possui funções específicas para algumas
+estatísticas comumente usadas. Aqui, usaremos a função **stat_smooth**
+para isso.
+
+```{r warning=FALSE}
+g2 + geom_point(aes(color=clarity)) + geom_smooth(method = "lm", se=FALSE, aes(color="red"))
+```
+
+A linha de regressão adicionada no gráfico anterior corresponde à
+correlação entre *carat* e *price* indepentende da classe de
+*clarity*. Porém, dependendo do caso pode ser mais interessante criar
+uma reta de correlação para cada classe de *clarity*. Fazemos isso da
+seguinte forma (adicionando também intervalos de confiança da média):
+
+```{r warning=FALSE}
+g3 <- g2 + geom_point(aes(color=clarity)) + geom_smooth(method = "lm", se=TRUE, aes(color=clarity))
+g3
+```
+
+\newpage
+
+# Personalizando os gráficos
+
+## Alterar rótulos dos eixos
+
+```{r warning=FALSE}
+g3 + xlab("Quilates") + ylab("Preco")
+```
+
+\newpage
+
+## Alterar limites dos eixos
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000)
+```
+
+\newpage
+
+## Alterar tamanho e direção das fontes dos eixos
+```{r warning=FALSE}
+g3 + theme(axis.text.x = element_text(angle=45,vjust=1,size=30))
+```
+
+\newpage
+
+## Inserir anotações
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) + annotate("text",x=9.5,y=30000,label= "Painel a",color="red")
+```
+
+\newpage
+
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) +
+    annotate("rect",xmin=3, xmax=4, ymin=10000,
+             ymax=20000, alpha=.2, color="blue",fill="green")
+```
+
+\newpage
+
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) +
+    annotate("segment", x=3, xend=4, y=30000, yend=20000,
+             color="orange", arrow=arrow(length=unit(1,"cm")))
+```
+
+\newpage
+
+## Alterar paleta de cores
+```{r warning=FALSE}
+g2 + geom_point(aes(color=clarity)) + scale_color_brewer(type="seq",palette="Set3")
+```
+
+\newpage
+
+## Separar gráficos em painéis
+```{r warning=FALSE}
+g2 + geom_point(aes(color=clarity)) + facet_grid(. ~ cut)
+```
+
+\newpage
+
+```{r warning=FALSE}
+g2 + geom_point(aes(color=clarity)) + facet_grid(cut ~ .)
+```
+
+\newpage
+
+```{r warning=FALSE}
+g2 + geom_point(aes(color=clarity)) + facet_grid(cut ~ clarity)
+```
+
+\newpage
+
+## Alterar posição, título e tamanho da legenda
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) + theme(legend.position = "none")
+```
+
+\newpage
+
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) + theme(legend.position = "bottom")
+```
+
+\newpage
+
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) + theme(legend.position = "bottom", legend.title = element_blank())
+```
+
+\newpage
+
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) + theme(legend.position = c(.8,.8))
+```
+
+\newpage
+
+```{r warning=FALSE}
+g3 + xlim(0,10) + ylim(0,30000) + theme(legend.position = c(.8,.2))
+```
+
+\newpage
+
+## Alterar temas
+```{r warning=FALSE}
+g3 + theme_bw()
+```
+
+\newpage
+
+```{r warning=FALSE}
+g3 + theme(panel.grid.major = element_line(colour = "red", linetype = "dotted"), panel.background = element_rect(fill = "green"))
+```

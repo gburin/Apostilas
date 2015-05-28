@@ -23,7 +23,31 @@
 \usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\usepackage[twoside]{geometry}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\ErrorTok}[1]{\textbf{{#1}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\usepackage{longtable,booktabs}
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
               unicode=false, % unicode breaks when used with xetex
@@ -33,7 +57,7 @@
 \fi
 \hypersetup{breaklinks=true,
             bookmarks=true,
-            pdfauthor={Gustavo Burin Ferreira},
+            pdfauthor={Laboratório de Macroevolução e Macroecologia},
             pdftitle={Apostila SSH},
             colorlinks=true,
             citecolor=blue,
@@ -44,7 +68,7 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
-\setcounter{secnumdepth}{0}
+\setcounter{secnumdepth}{5}
 
 %%% Use protect on footnotes to avoid problems with footnotes in titles
 \let\rmarkdownfootnote\footnote%
@@ -56,7 +80,7 @@
   \title{Apostila SSH}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-  \author{Gustavo Burin Ferreira}
+  \author{Laboratório de Macroevolução e Macroecologia}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
   \predate{\centering\large\emph}
@@ -71,9 +95,288 @@
 \maketitle
 
 
-\section{Teste para ver se funfa a
-bagaça}\label{teste-para-ver-se-funfa-a-bagaca}
+{
+\hypersetup{linkcolor=black}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\section{Introdução}\label{introducao}
 
-Um pouco de textão polêmico
+\subsection{O que é SSH?}\label{o-que-e-ssh}
+
+SSH é a sigla para `Secure SHell', e é basicamente um protocolo de rede
+que permite computadores se conectarem via rede de forma a permitir que
+um computador execute comandos em unidades remotas de maneira segura
+(criptografada). Essa segurança é garantida por uma chave de segurança
+que é armazenada tanto em no computador local quanto na máquina remota.
+Além disso, na maioria das vezes esse acesso é somente autorizado
+através de senhas de acesso.
+
+\subsection{Acesso}\label{acesso}
+
+O acesso básico a uma máquina remota via SSH é bastante simples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$}\StringTok{ }\NormalTok{ssh usuario@ip}
+\end{Highlighting}
+\end{Shaded}
+
+No entanto, alguns argumentos podem ser usados conjuntamente com esse
+comando básico quando a tarefa requer especificações extras. Uma lista
+destes argumentos e suas funções pode ser facilmente obtida usando o
+comando
+
+\begin{verbatim}
+$ man ssh
+\end{verbatim}
+
+que abre o manual deste programa. (Esta sintaxe pode ser usada para
+qualquer programa na linha de comando. \emph{Ex. man cp, man emacs,
+etc.})
+
+Apesar de vários desses argumentos serem importantes, para nosso acesso
+aos servidores \emph{labmeme1}, \emph{jabba} e \emph{leia} usaremos a
+sintaxe básica. Os servidores do \textbf{LabMeMe} estão configurados no
+endereço:
+
+\begin{verbatim}
+labmeme1: 143.107.246.251
+jabba: 143.107.246.253
+leia: 192.168.0.1 (ip interno, acesso via jabba)
+\end{verbatim}
+
+Sendo assim, para acessar o servidor \emph{jabba}, por exemplo, o
+usuário deve digitar:
+
+\begin{verbatim}
+$ ssh usuario@143.107.246.253
+\end{verbatim}
+
+No primeiro acesso, uma mensagem de aviso aparecerá perguntando se você
+tem certeza se quer continuar.
+
+\begin{verbatim}
+# The authenticity of host 'github.com (207.97.227.239)' can't be established.
+# RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.
+# Are you sure you want to continue connecting (yes/no)?
+\end{verbatim}
+
+Isso acontece pois o protocolo SSH é baseado no reconhecimento entre as
+chaves públicas do computador local e do computador remoto. No primeiro
+acesso tanto a chave local quanto a chave remota serão armazenadas nos
+dois locais, evitando que a identidade das máquinas precise ser
+verificada pelo usuário em todo acesso. Por fim, basta digitar
+\emph{yes} que sua senha será pedida. (\emph{Nota: ao digitar sua senha,
+a maioria dos sistemas operacionais não mostrará nenhum caracter
+representando sua senha, ou seja, você digitará a senha e nada vai
+aparecer na tela. Não se preocupe, isso é mais uma medida de
+segurança.})
+
+\section{Rotinas Comuns}\label{rotinas-comuns}
+
+\subsection{Armazenando os endereços de IP das
+máquinas}\label{armazenando-os-enderecos-de-ip-das-maquinas}
+
+Lembrar dos endereços numéricos de IP das máquinas é algo que não
+precisa ser feito. Em sistemas UNIX, é possível atribuir nomes a esses
+endereços ao editar o arquivo /etc/hosts utilizando seu editor de
+preferência (nano, vi, emacs, gedit, etc.)
+
+\begin{verbatim}
+$ emacs /etc/hosts
+
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1       localhost
+255.255.255.255 broadcasthost
+::1             localhost
+fe80::1%lo0     localhost
+\end{verbatim}
+
+Ao editar esse arquivo, basta inserir na primeira coluna o endereço de
+IP da máquina desejada e na segunda coluna o nome que você quer atribuir
+à ela.
+
+\begin{verbatim}
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1       localhost
+255.255.255.255 broadcasthost
+::1             localhost
+fe80::1%lo0     localhost
+143.107.246.251 labmeme1
+143.107.246.253 jabba
+\end{verbatim}
+
+Após atribuir um \emph{alias} (nome que damos a qualquer ``codinome'' de
+um objeto ou função em UNIX) aos servidores, podemos nos conectar a eles
+tanto através do endereço de IP quanto através de seu \emph{alias}.
+
+\begin{verbatim}
+$ ssh usuario@labmeme1
+$ ssh usuario@jabba
+\end{verbatim}
+
+Neste exemplo, o mesmo nome do servidor foi atribuído ao seu , porém
+isso pode ser modificado de acordo com sua vontade/necessidade.
+
+\begin{verbatim}
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1       localhost
+255.255.255.255 broadcasthost
+::1             localhost
+fe80::1%lo0     localhost
+143.107.246.251 servidor-mac
+143.107.246.253 servidor-linux
+\end{verbatim}
+
+Aqui o acesso seria feito da seguinte maneira:
+
+\begin{verbatim}
+$ ssh usuario@servidor-mac
+$ ssh usuario@servidor-linux
+\end{verbatim}
+
+\subsection{Acessando nós escravos}\label{acessando-nos-escravos}
+
+Da mesma forma como você pode fazer no seu computador, o nó escravo do
+nosso servidor Linux (\emph{leia}) pode ser acessado via ssh através do
+nó \emph{jabba}
+
+\begin{verbatim}
+$ *dentro do nó jabba* ssh usuario@leia
+\end{verbatim}
+
+\subsection{\texorpdfstring{\emph{Tunneling} por
+ssh}{Tunneling por ssh}}\label{tunneling-por-ssh}
+
+Em alguns casos, como no serviço de computação em nuvem da USP, para
+maior segurança o acesso aos servidores não é feito de forma direta.
+Nesse caso, o acesso é inicialmente feito a uma máquina (virtual nesse
+caso, podendo ser física) que media a ``conversa'' entre a máquina local
+e os servidores de processamento. Sendo assim, o acesso aos servidores
+de processamento deve ser feito em duas etapas: 1. Acesso via ssh:
+\textbf{ssh usuario@shark.lcca.usp.br}; 2. Acesso via ssh a partir dessa
+máquina aos servidores \emph{aguia} e \emph{jaguar}: \textbf{ssh
+usuario@aguia} ou \textbf{ssh usuario@jaguar}.
+
+Sendo assim, a cópia de arquivos de/para o servidor (capítulo 2)
+precisaria também ser feita seguindo essas duas etapas. Porém, as
+máquinas intermediárias costumam ter limitação de recursos
+(principalmente de armazenamento), além de ser um processo bastante
+inconveniente copiar arquivos para um determinado lugar para em seguida
+copiá-los novamente para uma nova localidade. Para evitar esse tipo de
+problemas, é possível estabelecer uma conexão de \emph{tunneling} por
+ssh, que cria literalmente um túnel de acesso direto entre a máquina
+local e os servidores de processamento. Essa conexão é criada da
+seguinte forma (usando uma conexão com o servidor \emph{aguia} como
+exemplo:
+
+\begin{verbatim}
+$ ssh -2 -L 8020:aguia.lcca.usp.br:22 usuario@shark.lcca.usp.br
+\end{verbatim}
+
+onde \textbf{-L} indica que o link entre sua máquina e o servidor deve
+ser feito através da porta 8020 (a porta 22 é a porta padrão de
+comunicação via ssh). Essa conexão deve ser mantida aberta para que os
+arquivos possam ser copiados diretamente da máquina local para os
+servidores de processamento e vice-versa.
+
+\subsection{Encerrando uma conexão}\label{encerrando-uma-conexao}
+
+Para encerrar uma conexão ssh, basta digitar \textbf{exit} ou apertar as
+teclas \textbf{Ctrl+d}
+
+\section{\texorpdfstring{Copiando arquivos \emph{via}
+ssh}{Copiando arquivos via ssh}}\label{copiando-arquivos-via-ssh}
+
+A rotina de trabalho em servidores remotos envolve muitas etapas de
+cópia de arquivos tanto do computador local para o remoto quanto no
+caminho inverso. A cópia de arquivos via ssh se assemelha bastante à
+cópia de arquivos localmente, porém usa-se o comando \textbf{scp} e seus
+argumentos.
+
+Os argumentos mais comumente usados são:
+
+\begin{longtable}[c]{@{}ll@{}}
+\toprule
+Argumento & Função\tabularnewline
+\midrule
+\endhead
+-r & \textbf{recursive}: necessário para copiar múltiplos arquivos e/ou
+pastas\tabularnewline
+-v & \textbf{verbose}: imprime mensagens de progresso\tabularnewline
+-P & \textbf{port}: indica a porta pela qual os arquivos devem ser
+copiados\tabularnewline
+-q & \textbf{quiet}: não imprime mensagens nem avisos\tabularnewline
+-l & \textbf{limit}: limita o uso de banda de conexão (em bytes) para a
+cópia dos arquivos\tabularnewline
+\bottomrule
+\end{longtable}
+
+\subsection{Copiando um arquivo}\label{copiando-um-arquivo}
+
+Neste exemplo, vamos copiar o arquivo \textbf{foo.txt} do computador
+local para a pasta \emph{/home} do servidor. (Para os exemplos a seguir,
+assumiremos que você já domina os comandos básicos de shell).
+
+\begin{verbatim}
+$ scp foo.txt usuario@jabba:~/
+\end{verbatim}
+
+\subsection{Copiando vários arquivos ou
+pasta}\label{copiando-varios-arquivos-ou-pasta}
+
+Agora, vamos copiar a pasta \emph{phylogenies} localizada na pasta
+\emph{/home/usuario/} para a pasta \emph{\textasciitilde{}/Dropbox}.
+
+\begin{verbatim}
+$ scp -r usuario@143.107.246.251:~/usuario/phylogenies ~/Dropbox
+\end{verbatim}
+
+Lembre-se de tomar cuidado com os caminhos para os arquivos. Verifique
+se você está na pasta desejada para usar a forma simplificada de
+caminho, ou certifique-se de passar o caminho completo do(s)
+arquivo(s)/pasta(s) a ser(em) copiados(as).
+
+\subsection{\texorpdfstring{Copiando arquivos usando o
+\emph{tunneling}}{Copiando arquivos usando o tunneling}}\label{copiando-arquivos-usando-o-tunneling}
+
+Como mencionado anteriormente, em servidores como o da nuvem da USP
+podemos copiar arquivos diretamente para os servidores de processamento
+sem ter que copiar primeiro os arquivos para o gatekeeper e em seguida
+copiar de lá para os servidores. Para isso, o primeiro passo é ativar a
+conexão de \emph{tunneling} como indicado na seção \textbf{2.3}.
+
+Em seguida, utilizando o protocolo scp, podemos copiar um ou mais
+arquivos ou pastas diretamente para os servidores. IMPORTANTE: lembrar a
+porta usada no \emph{tunneling}! Ela será necessária nesta etapa.
+
+\begin{verbatim}
+$ scp -r -P 8020 ~/Dropbox/phylogenies usuario@localhost:~/projects
+\end{verbatim}
+
+Este comando copiou a pasta de filogenias diretamente para o servidor ao
+qual nos conectamos usando a porta 8020 que foi determinada na conexão
+de \emph{tunneling}. O comando para copiar arquivos do servidor para o
+computador local é similar:
+
+\begin{verbatim}
+$ scp -r -P 8020 usuario@localhost:~/projects/phylogenies ~/backup/
+\end{verbatim}
 
 \end{document}

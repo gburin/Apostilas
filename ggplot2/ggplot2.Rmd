@@ -86,7 +86,9 @@ data.frame("Valor" = c(a,b), "Tempo" = rep(c(2,4,8,16,24),2), "Tratamento" = rep
 
 Alguns pacotes foram desenvolvidos com o propósito de facilitar a
 organização dos dados de maneira limpa e otimizada. Dentre esses
-pacotes, encontram-se *(d)plyr*, *tidyr*, *magrittr* dentre outros.
+pacotes, encontram-se *(d)plyr*, *tidyr*, *magrittr* dentre
+outros. Para mais informações sobre como (e porquê) organizar seus
+dados dessa forma, leia [este artigo do Dr. Wickham](http://www.jstatsoft.org/v59/i10/paper).
 
 # Estrutura básica de um gráfico
 
@@ -382,3 +384,25 @@ g3 + theme_bw()
 ```{r warning=FALSE}
 g3 + theme(panel.grid.major = element_line(colour = "red", linetype = "dotted"), panel.background = element_rect(fill = "green"))
 ```
+
+\newpage
+
+# Principais tipos de gráfico
+
+Tipo de gráfico | Função
+----------------|-------------------
+Histograma      |**geom_histogram**
+Densidade       |**geom_density**
+Boxplot         |**geom_boxplot**
+Barras          |**geom_bar**
+Polígonos       |**geom_polygon**
+Abline          |**geom_abline**
+Texto           |**geom_text**
+
+# Documentação online
+
+[Documentação oficial do *ggplot2*](http://docs.ggplot2.org/current/)
+
+[R Cookbook - Graphs](http://www.cookbook-r.com/Graphs/)
+
+[stack**overflow** - *ggplot2*](http://stackoverflow.com/questions/tagged/ggplot2)
